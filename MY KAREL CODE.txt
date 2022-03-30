@@ -1,0 +1,393 @@
+#include <stdio.h>
+#include <stdlib.h>
+const int t = 10;
+/*char arr[6][10]= {
+        {'#','#','#','#','#','#','#','#','#','#'},
+        {'#','0','0','0','0','0','0','0','0','#'},
+        {'#','0','0','#','0','0','0','0','#','#'},
+        {'#','0','#','#','#','0','0','0','0','#'},
+        {'#','0','0','0','0','0','#','#','0','#'},
+        {'#','#','#','#','#','#','#','#','#','#'}};*/
+
+char arr[t][t];
+int flag = 0;
+int posr = 0, posc = 0; //current position of the robot
+char dir = 'e';         // current head direction of the robot
+void movf(int, int);    // function for moveforward
+void movb(int, int);    // function for movrbackward
+void tleft(char);       // function for turn left
+void tright(char);      // function for turn right
+void curp();            // function for get current position of the robot
+void curh();            //function for get current head direction of the robot
+void moveUntilNoBarrier(int, int);
+int r, c;
+
+
+void setArray(int tr, int tc)
+{
+    r = tr, c = tc;
+
+    for (int i = 0; i < r; i++)
+    {
+        flag = 1;
+        for (int j = 0; j < c; j++)
+        {
+
+            scanf("%s", &arr[i][j]);
+
+            if (arr[i][j] == '#' || arr[i][j] == '0' && arr[0][0]!='#')
+                continue;
+            
+            else
+            {
+                printf("\nError: Invalid Input");
+                flag = 0;
+                break;
+            }
+        }
+
+        if (flag == 0)
+            break;
+    }
+}
+
+int main()
+{
+    int ch;
+    int tr, tc;
+    printf("\nEnter Number of rows and colum for array:\n");
+    scanf("%d%d", &tr, &tc);
+    printf("\nEnter the array: \n");
+    setArray(tr, tc);
+
+    if (flag == 1)
+    {
+        printf("\n\nEntered Array are\n");
+        for (int i = 0; i < r; i++)
+        {
+            for (int j = 0; j < c; j++)
+            {
+
+                printf("%c ", arr[i][j]);
+            }
+            printf("\n");
+        }
+    }
+
+    int count = 0;
+    while (1)
+    {
+
+        if (flag == 0)
+        {
+            printf("\nError: EXIT");
+            exit(0);
+            break;
+        }
+
+        printf("\n\nMENU\n");
+        printf("1. MOVE FORWARD \n2. MOVE FORWARD UNTIL NO BARRIER\n3. MOVE BACKWARD\n4. TURN RIGHT\n5. TURN LEFT\n6. CURRENT POSITION\n7. CURRENT HEAD DIRECTION\n8. EXIT\n\n");
+        scanf("%d", &ch);
+        switch (ch)
+        {
+        case 1:
+            movf(posr, posc);
+            curp();
+            curh();
+            break;
+        case 2:
+            moveUntilNoBarrier(posr, posc);
+            curp();
+            curh();
+            break;
+        case 3:
+            movb(posr, posc);
+            curp();
+            curh();
+            break;
+        case 4:
+            tright(dir);
+            printf("Turned right\n");
+            curp();
+            curh();
+            break;
+        case 5:
+            tleft(dir);
+            printf("Turned left\n");
+            curp();
+            curh();
+            break;
+        case 6:
+            curp();
+            break;
+        case 7:
+            curh();
+            break;
+
+        case 8:
+            exit(0);
+        }
+    }
+    return 0;
+}
+
+void movf(int pr, int pc)
+{
+    if (dir == 'e')
+    {
+        if (posc < c && posr < r && posc >= 0 && posr >= 0 )
+        {
+            if (arr[posr][posc + 1] != '#' && posc!=c-1 )
+            {
+                printf("MOVED\n");
+                posc++;
+            }
+           
+            else
+            {
+                printf("MOVE NOT POSSIBLE\n");
+            }
+        }
+        else
+        {
+            printf("MOVE NOT POSSIBLE\n");
+        }
+    }
+    else if (dir == 's')
+    {
+        if (posc < c && posr < r && posc >= 0 && posr >= 0)
+        {
+            if (arr[posr + 1][posc] != '#' && posr!=c-1)
+            {
+                printf("MOVED\n");
+                posr++;
+            }
+            else
+            {
+                printf("MOVE NOT POSSIBLE\n");
+            }
+        }
+        else
+        {
+             printf("MOVE NOT POSSIBLE\n");
+        }
+    }
+    else if (dir == 'w')
+    {
+        if (posc < c && posr < r && posc >= 0 && posr >= 0)
+        {
+            if (arr[posr][posc - 1] != '#' && posc != 0)
+            {
+                printf("MOVED\n");
+                posc--;
+            }
+            else
+            {
+                printf("MOVE NOT POSSIBLE\n");
+            }
+        }
+        else
+        {
+            printf("MOVE NOT POSSIBLE\n");
+        }
+    }
+    else if (dir == 'n')
+    {
+        if (posc < c && posr < r && posc >= 0 && posr >= 0)
+        {
+            if (arr[posr - 1][posc] != '#' && posr != 0)
+            {
+                printf("MOVED\n");
+                posr--;
+            }
+            else
+            {
+                printf("MOVE NOT POSSIBLE\n");
+            }
+        }
+        else
+        {
+            printf("MOVE NOT POSSIBLE\n");
+        }
+    }
+    else
+    {
+        printf("MOVE NOT POSSIBLE\n");
+    }
+}
+
+void movb(int pr, int pc)
+{
+    if (dir == 'e')
+    {
+        if (posc < c && posr < r && posc >= 0 && posr >= 0)
+        {
+            if (arr[posr][posc - 1] != '#' && posc != 0)
+            {
+                printf("MOVED\n");
+                posc--;
+            }
+            else
+            {
+                printf("MOVE NOT POSSIBLE\n");
+            }
+        }
+        else
+        {
+            printf("MOVE NOT POSSIBLE\n");
+        }
+    }
+    else if (dir == 's')
+    {
+        if (posc < c && posr < r && posc >= 0 && posr >= 0)
+        {
+            if (arr[posr -1][posc] != '#' && posr != 0)
+            {
+                printf("MOVED\n");
+                posr--;
+            }
+            else
+            {
+                printf("MOVE NOT POSSIBLE\n");
+            }
+        }
+        else
+        {
+            printf("MOVE NOT POSSIBLE\n");
+        }
+    }
+    else if (dir == 'w')
+    {
+        if (posc < c && posr < r && posc >= 0 && posr >= 0)
+        {
+            if (arr[posr][posc + 1] != '#'&& posc!=c-1 )
+            {
+                printf("MOVED\n");
+                posc++;
+            }
+            else
+            {
+                printf("MOVE NOT POSSIBLE\n");
+            }
+        }
+        else
+        {
+            printf("MOVE NOT POSSIBLE\n");
+        }
+    }
+    else if (dir == 'n')
+    {
+        if (posc < c && posr < r && posc >= 0 && posr >= 0)
+        {
+            if (arr[posr + 1][posc] != '#' && posr!=r-1)
+            {
+                printf("MOVED\n");
+                posr++;
+            }
+            else
+            {
+                printf("MOVE NOT POSSIBLE\n");
+            }
+        }
+        else
+        {
+            printf("MOVE NOT POSSIBLE\n");
+        }
+    }
+}
+
+void moveUntilNoBarrier(int pr, int pc)
+{
+    if (dir == 'e')
+    {
+
+        while (arr[posr][posc + 1] != '#' && posc < c && posr < r && posc >= 0 && posr >= 0 && posc!=c-1)
+        {
+            printf("MOVED\n");
+            posc++;
+        }
+    }
+
+    else if (dir == 's')
+    {
+
+        while (arr[posr + 1][posc] != '#' && posc < c && posr < r && posc >= 0 && posr >= 0 && posr!=r-1)
+        {
+            printf("MOVED\n");
+            posr++;
+        }
+    }
+    else if (dir == 'w')
+    {
+
+        while (arr[posr][posc - 1] != '#' && posc < c && posr < r && posc > 0 && posr >= 0)
+        {
+            printf("MOVED\n");
+            posc--;
+        }
+    }
+    else if (dir == 'n')
+    {
+
+        while (arr[posr - 1][posc] != '#' && posc < c && posr < r && posc >= 0 && posr > 0)
+        {
+            printf("MOVED\n");
+            posr--;
+        }
+    }
+    else
+    {
+        printf("MOVE NOT POSSIBLE\n");
+    }
+}
+
+void tright(char d)
+{
+    if (d == 'n')
+    {
+        dir = 'e';
+    }
+    else if (d == 'e')
+    {
+        dir = 's';
+    }
+    else if (d == 's')
+    {
+        dir = 'w';
+    }
+    else if (d == 'w')
+    {
+        dir = 'n';
+    }
+}
+void tleft(char d)
+{
+    if (d == 'n')
+    {
+        dir = 'w';
+    }
+    else if (d == 'w')
+    {
+        dir = 's';
+    }
+    else if (d == 's')
+    {
+        dir = 'e';
+    }
+    else if (d == 'e')
+    {
+        dir = 'n';
+    }
+}
+void curp()
+{
+    printf("CURRENT POSITION : [%d %d]\n", posr, posc);
+}
+void curh()
+{
+    printf("CURRENT HEAD DIRECTION : %c\n", dir);
+}
+
+
+
+
